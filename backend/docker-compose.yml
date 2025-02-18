@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: backend_app
+    restart: always
+    env_file:
+      - .env  # Load environment variables
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy  # Waits for PostgreSQL
+    networks:
+      - shared_network
+    volumes:
+      - ./app:/app  # Syncs the whole backend folder (useful for dev)
+
+networks:
+  shared_network:
+    external: true  # Uses the network created by `infra/docker-compose.yml`

@@ -1,0 +1,9 @@
+infra/*
+!infra/docker-compose.yml
+
+# Environment variables file
+.env
+
+# Python specific files
+**/__pycache__/
+**/*.pyc

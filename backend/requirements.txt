@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+sqlalchemy
+alembic
+asyncpg  # If using async PostgreSQL
+psycopg2-binary  # If using synchronous PostgreSQL
+python-dotenv  # If you need to load .env files
