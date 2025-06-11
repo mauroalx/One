@@ -1,9 +1,82 @@
-infra/*
-!infra/docker-compose.yml
-
-# Environment variables file
+# ====================
+# BACKEND (Python)
+# ====================
 .env
-
-# Python specific files
+*.env
 **/__pycache__/
 **/*.pyc
+**/*.pyo
+*.db
+*.sqlite3
+*.log
+*.pid
+*.bak
+*.swp
+
+# Alembic migration cache
+alembic/versions/*.pyc
+
+# VS Code
+.vscode/
+
+# IDEs e editores
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ====================
+# FRONTEND (ReactJS)
+# ====================
+frontend/node_modules/
+frontend/.env
+frontend/.next/
+frontend/.turbo/
+frontend/dist/
+frontend/build/
+frontend/.DS_Store
+
+# npm/yarn lock files (opcional deixar apenas 1 tipo)
+# yarn.lock
+# package-lock.json
+
+# ====================
+# DOCKER / INFRA
+# ====================
+infra/
+!infra/docker-compose.yml
+*.tar
+*.img
+*.bak
+
+# ====================
+# SISTEMA
+# ====================
+.DS_Store
+Thumbs.db
+*.log
+
+# ====================
+# PYTEST / TESTES
+# ====================
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# ====================
+# JUPYTER / DATA
+# ====================
+*.ipynb_checkpoints
+*.csv
+*.parquet
+*.feather
+*.h5
+*.npz
+*.npy
+*.xlsx

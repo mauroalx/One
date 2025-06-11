@@ -1,22 +1,44 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - shared_network
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      retries: 5
+
   backend:
     build: .
     container_name: backend_app
+    ports:
+      - "8000:8000"
     restart: always
     env_file:
-      - .env  # Load environment variables
+      - .env
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     depends_on:
       postgres:
-        condition: service_healthy  # Waits for PostgreSQL
+        condition: service_healthy
     networks:
       - shared_network
     volumes:
-      - ./app:/app  # Syncs the whole backend folder (useful for dev)
+      - .:/app
+
+volumes:
+  postgres_data:
 
 networks:
   shared_network:
-    external: true  # Uses the network created by `infra/docker-compose.yml`
+    name: shared_network
