@@ -31,7 +31,12 @@ Alguns exemplos:
 - `feature/frontend-user-profile`
 - `bugfix/correcao-no-carrinho`
 
-Isso evita que você mande um `PR` diretamente para o `main`.
+Isso evita que você tente mandar um `PR` diretamente para o `main`.
+
+
+### Variáveis ambiente
+
+em `frontend/` e `backend/` há, respectivamente, um arquivo `.env.example`. Antes de iniciar o desenvolvimento, é obrigatório copiar esses arquivos para .env e ajustar os valores conforme o ambiente local.
 
 ### Rodar o Docker Compose
 
