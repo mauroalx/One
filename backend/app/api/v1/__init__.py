@@ -1,6 +1,6 @@
 # backend/app/api/v1/__init__.py
 from fastapi import APIRouter
-from app.api.v1.routers import user,auth  # Exemplo de rota
+from app.api.v1.routes import user,auth  # Exemplo de rota
 
 router = APIRouter()
 router.include_router(user.router, prefix="/users", tags=["Users"])
