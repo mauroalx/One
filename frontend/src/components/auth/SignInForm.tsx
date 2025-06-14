@@ -1,4 +1,5 @@
 "use client";
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -8,6 +9,9 @@ import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 import React, { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+
 
 const schema = yup.object().shape({
   email: yup.string().required("O e-mail é obrigatório").email("E-mail inválido"),
@@ -15,6 +19,9 @@ const schema = yup.object().shape({
 });
 
 export default function SignInForm() {
+  const { login } = useAuth();
+  const router = useRouter();
+  
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
@@ -22,9 +29,28 @@ export default function SignInForm() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: { email: string; password: string }) => {
-    console.log("Dados enviados:", data);
+  const onSubmit = async (data: { email: string; password: string }) => {
+    console.log("Dados do formulário:", data);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/v1/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error("Erro ao autenticar");
+
+      const result = await res.json();
+
+      login(result.access_token, result.user); // Chama a função de login do contexto AuthContext [lida com o token recebido]
+      router.push("/"); // Redireciona para a página do dashboard após o login bem-sucedido
+    } catch (err) {
+      console.error("Erro:", err);
+    }
   };
+
 
   return (
     <div className="flex flex-col flex-1 p-6 rounded-2xl sm:rounded-none sm:border-0 sm:p-8">

@@ -4,9 +4,11 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import {useAuth} from "@/context/AuthContext"
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -31,7 +33,7 @@ export default function UserDropdown() {
         </span>
 
         <span className="block mr-1 font-medium text-theme-sm">
-          Musharof
+          {user ? user.name : "Carregando..."}
         </span>
 
         <svg
@@ -61,10 +63,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-       Musharof Chowdury
+          {user ? user.name : "Carregando..."}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-           randomuser@pimjo.com
+           {user ? user.email : "Carregando..."}
           </span>
         </div>
 
@@ -91,7 +93,7 @@ export default function UserDropdown() {
                   fill=""
                 />
               </svg>
-              Edit profile
+              Editar perfil
             </DropdownItem>
           </li>
           <li>
@@ -116,7 +118,7 @@ export default function UserDropdown() {
                   fill=""
                 />
               </svg>
-              Account settings
+              Configurações	da conta
             </DropdownItem>
           </li>
           <li>
@@ -141,7 +143,7 @@ export default function UserDropdown() {
                   fill=""
                 />
               </svg>
-              Support
+              Ajuda
             </DropdownItem>
           </li>
         </ul>
@@ -164,7 +166,7 @@ export default function UserDropdown() {
               fill=""
             />
           </svg>
-          Sign out
+          Encerrar sessão
         </Link>
       </Dropdown>
     </div>
