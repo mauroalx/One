@@ -66,7 +66,7 @@ const CustomersFilterHeader: React.FC<Props> = ({ onSearch }) => {
       <div className="flex items-end">
         <button
           onClick={handleSearch}
-          className="h-10 w-full px-6 text-sm font-semibold text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition"
+          className="h-10 w-full px-6 text-sm font-semibold text-white bg-brand-500 rounded-lg dark:bg-gray-600 hover:bg-brand-600 transition"
         >
           Buscar
         </button>
