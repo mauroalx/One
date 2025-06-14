@@ -34,5 +34,4 @@ Informe prints ou saída do console que demonstre que tudo funciona como esperad
 - [ ] Os testes estão passando
 - [ ] Segui o `CONTRIBUTING.md`
 - [ ] Realizei o code review nas minhas alterações
-- [ ] Apliquei o `black` e o `isort` (se for o backend)
 - [ ] Compilei o frontend sem problemas
