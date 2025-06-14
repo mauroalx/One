@@ -2,6 +2,7 @@
 import React from "react";
 import Badge from "../ui/badge/Badge";
 import { ArrowDownIcon, ArrowUpIcon, BoxIconLine, GroupIcon } from "@/icons";
+import { Tooltip } from "../ui/tooltip/Tooltip";
 
 export const EcommerceMetrics = () => {
   return (
@@ -15,16 +16,19 @@ export const EcommerceMetrics = () => {
         <div className="flex items-end justify-between mt-5">
           <div>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              Customers
+              Clientes
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
               3,782
             </h4>
           </div>
-          <Badge color="success">
-            <ArrowUpIcon />
-            11.01%
-          </Badge>
+          <Tooltip message="Clientes novos no último mês">
+            <Badge color="success">
+              <ArrowUpIcon />
+              11.01%
+            </Badge>
+          </Tooltip>
+
         </div>
       </div>
       {/* <!-- Metric Item End --> */}

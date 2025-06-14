@@ -25,7 +25,7 @@ class LoginRequest(BaseModel):
 
 
 @router.get("/confirm")
-async def confirm(user=Depends(require_auth)):
+async def confirm(user = require_auth()):
     """
     Returns the authenticated user's information extracted from the JWT token.
 
@@ -37,7 +37,7 @@ async def confirm(user=Depends(require_auth)):
         "email": user["email"],
         "name": user["name"],
     }
-
+    
 
 @router.post("/login")
 async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
