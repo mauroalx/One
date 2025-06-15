@@ -1,4 +1,4 @@
-# 📡 Integração do FreeRADIUS 3 com o projeto One (ERP)
+# 📡 Integração do FreeRADIUS 3 com o projeto One. (ERP)
 
 Este guia tem como objetivo ensinar desenvolvedores a instalar e configurar o FreeRADIUS 3 para autenticação utilizando o banco de dados PostgreSQL do projeto One.
 
@@ -7,8 +7,6 @@ Este guia tem como objetivo ensinar desenvolvedores a instalar e configurar o Fr
 ## ✅ Pré-requisitos
 
 - Linux (Ubuntu/Debian)
-- PostgreSQL acessível com as tabelas já migradas via Alembic
-- Acesso à pasta docs/ do projeto One (para ver este guia)
 - Acesso ao IP/porta do banco PostgreSQL
 
 ---
@@ -27,7 +25,7 @@ sudo apt install freeradius freeradius-postgresql -y
 | /etc/freeradius/3.0/mods-available/sql      | Configura o banco PostgreSQL  |
 | /etc/freeradius/3.0/sites-enabled/default   | Ativa o módulo SQL nas seções |
 
-⚠️ Não é necessário configurar o clients.conf pois o projeto One usa read_clients = yes com o NAS gerenciado diretamente no banco de dados.
+⚠️ Não é necessário configurar o clients.conf pois o projeto One. usa read_clients = yes com o NAS gerenciado diretamente no banco de dados.
 
 ---
 
@@ -103,7 +101,7 @@ As seguintes tabelas são obrigatórias (já criadas via Alembic):
 
 - radcheck — credenciais
 - radreply — respostas (ex: atributos como Framed-IP-Address)
-- radacct — contabilidade
+- radacct — logs de conexão
 - radpostauth — log de tentativas
 - nas — lista de clientes autorizados (se read_clients = yes)
 
