@@ -1,11 +1,11 @@
-import Customers from "@/components/business/customers/Customers";
-import Calendar from "@/components/calendar/Calendar";
+
+import Users from "@/components/auth/users/Users";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "One. | Clientes",
+  title: "One. | Usuários",
   description:
     "",
   // other metadata
@@ -14,13 +14,13 @@ export default function page() {
   return (
     <div>
       <PageBreadcrumb 
-      pageTitle="Clientes" 
+      pageTitle="Usuários" 
       action={{
         label: "Adicionar +",
-        href: "/business/customers/create",
+        href: "/users/create",
       }}
       />
-      <Customers />
+      <Users />
     </div>
   );
 }

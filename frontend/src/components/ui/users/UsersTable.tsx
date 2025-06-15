@@ -1,42 +1,43 @@
+// components/business/users/UsersTable.tsx
 "use client";
-import { CustomerFilter } from "@/components/business/customers/Customers";
+
 import React, { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, ArrowRight, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowRight, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { UserFilter } from "@/components/auth/users/Users";
 
 interface Props {
-  filters: CustomerFilter | null;
+  filters: UserFilter | null;
 }
 
-interface Customer {
+interface User {
   id: number;
   name: string;
-  cpfcnpj: string;
-  login: string;
+  email: string;
+  role: string;
 }
 
-const mockData: Customer[] = Array.from({ length: 23 }).map((_, i) => ({
+const mockUsers: User[] = Array.from({ length: 17 }).map((_, i) => ({
   id: i + 1,
-  name: `Cliente ${i + 1}`,
-  cpfcnpj: `000.000.00${i + 1}-00`,
-  login: `${Math.floor(Math.random() * 5) + 1}`,
+  name: `Usuário ${i + 1}`,
+  email: `usuario${i + 1}@example.com`,
+  role: i % 3 === 0 ? "admin" : i % 3 === 1 ? "user" : "support",
 }));
 
-const ITEMS_PER_PAGE = 7;
+const ITEMS_PER_PAGE = 6;
+type SortKey = keyof User;
 
-type SortKey = keyof Customer;
-
-const CustomersTable: React.FC<Props> = ({ filters }) => {
-  const [results, setResults] = useState<Customer[]>([]);
+const UsersTable: React.FC<Props> = ({ filters }) => {
+  const [results, setResults] = useState<User[]>([]);
   const [page, setPage] = useState(1);
   const [sortKey, setSortKey] = useState<SortKey>("id");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     const filtered = filters
-      ? mockData.filter((c) =>
+      ? mockUsers.filter((u) =>
           Object.entries(filters).every(([key, value]) =>
             value
-              ? String(c[key as keyof Customer])
+              ? String(u[key as keyof User])
                   .toLowerCase()
                   .includes(value.toLowerCase())
               : true
@@ -59,16 +60,12 @@ const CustomersTable: React.FC<Props> = ({ filters }) => {
       : String(valB).localeCompare(String(valA));
   });
 
-  const paginated = sorted.slice(
-    (page - 1) * ITEMS_PER_PAGE,
-    page * ITEMS_PER_PAGE
-  );
-
-  const totalPages = Math.ceil(results.length / ITEMS_PER_PAGE);
+  const paginated = sorted.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(results.length / ITEMS_PER_PAGE));
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
       setSortKey(key);
       setSortOrder("asc");
@@ -85,7 +82,7 @@ const CustomersTable: React.FC<Props> = ({ filters }) => {
                 <tr className="bg-white dark:bg-white/5 text-xs font-semibold text-gray-700 dark:text-white uppercase tracking-wide border-b dark:border-gray-800">
                   <th className="px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("id")}>
                     <div className="inline-flex items-center gap-1">
-                      Código {sortKey === "id" ? (sortOrder === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />) : null}
+                      ID {sortKey === "id" ? (sortOrder === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />) : null}
                     </div>
                   </th>
                   <th className="px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("name")}>
@@ -93,25 +90,21 @@ const CustomersTable: React.FC<Props> = ({ filters }) => {
                       Nome {sortKey === "name" ? (sortOrder === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />) : null}
                     </div>
                   </th>
-                  <th className="px-4 py-3">CPF/CNPJ</th>
-                  <th className="px-4 py-3">Logins</th>
+                  <th className="px-4 py-3">Email</th>
+                  <th className="px-4 py-3">Perfil</th>
                   <th className="px-4 py-3 text-right">Ação</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                {paginated.map((c) => (
-                  <tr
-                    key={c.id}
-                    className="hover:bg-gray-50 dark:hover:bg-white/5"
-                  >
-                    <td className="px-4 py-3">{c.id}</td>
-                    <td className="px-4 py-3">{c.name}</td>
-                    <td className="px-4 py-3">{c.cpfcnpj}</td>
-                    <td className="px-4 py-3">{c.login}</td>
+                {paginated.map((u) => (
+                  <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
+                    <td className="px-4 py-3">{u.id}</td>
+                    <td className="px-4 py-3">{u.name}</td>
+                    <td className="px-4 py-3">{u.email}</td>
+                    <td className="px-4 py-3 capitalize">{u.role}</td>
                     <td className="px-4 py-3 text-right">
-                      <button onClick={() => { window.location.href = '/business/customers/7323' }} className="inline-flex items-center gap-1 text-sm font-medium text-brand-500 hover:underline">
-                        Ver
-                        <ArrowRight className="w-4 h-4" />
+                      <button className="inline-flex items-center gap-1 text-sm font-medium text-brand-500 hover:underline">
+                        ver <ArrowRight className="w-4 h-4" />
                       </button>
                     </td>
                   </tr>
@@ -120,7 +113,6 @@ const CustomersTable: React.FC<Props> = ({ filters }) => {
             </table>
           </div>
 
-          {/* Paginação */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-2 pt-2">
               <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -147,11 +139,11 @@ const CustomersTable: React.FC<Props> = ({ filters }) => {
         </>
       ) : (
         <p className="text-sm text-gray-500 dark:text-gray-400 px-2">
-          {filters ? "Nenhum cliente encontrado." : "Use o filtro acima."}
+          {filters ? "Nenhum usuário encontrado." : "Use o filtro acima."}
         </p>
       )}
     </div>
   );
 };
 
-export default CustomersTable;
+export default UsersTable;

@@ -38,7 +38,7 @@ const navItems: NavItem[] = [
   {
     icon: <DollarLineIcon />,
     name: "Financeiro",
-    subItems: [{ name: "Remessas", path: "/", pro: false }],
+    subItems: [{ name: "Cobranças", path: "/finance/billing", pro: false }],
   },
   {
     icon: <TaskIcon />,
@@ -101,9 +101,9 @@ const othersItems: NavItem[] = [
     icon: <LockIcon />,
     name: "Autenticação",
     subItems: [
-      { name: "Usuários", path: "/users", pro: false },
-      { name: "Perfis de acesso", path: "/roles", pro: false },
-      { name: "API", path: "/roles", new: true },
+      { name: "Usuários", path: "/auth/users", pro: false },
+      { name: "Perfis de acesso", path: "/auth/roles", pro: false },
+      { name: "API", path: "/auth/api", new: true },
     ],
   },
   // {

@@ -5,6 +5,8 @@ services:
     image: postgres:latest
     container_name: postgres_db
     restart: always
+    ports:
+      - "5432:5432"  # <-- ADICIONA ESTA LINHA
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
