@@ -51,7 +51,7 @@ const navItems: NavItem[] = [
     icon: <BoxCubeIcon />,
     name: "Estoque",
     subItems: [
-      { name: "Unidades", path: "/estoque/unidades", pro: false },
+      { name: "Unidades", path: "/stock/warehouse", pro: false },
       { name: "Almoxarifado", path: "/estoque/almoxarifado", pro: false },
       { name: "Automações", path: "/estoque/automacoes", new: true },
     ],
