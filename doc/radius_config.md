@@ -117,6 +117,85 @@ sudo freeradius -X
 
 ---
 
+
+## 🎯 Gerenciamento de IPs via FreeRADIUS (`sqlippool`)
+
+Caso deseje que o próprio FreeRADIUS gerencie a alocação de IPs dinâmicos (sem configurar IP fixo via `Framed-IP-Address`), é necessário:
+
+---
+
+### 1. Habilitar o módulo `sqlippool`
+
+```bash
+cd /etc/freeradius/3.0/mods-enabled
+ln -s ../mods-available/sqlippool .
+```
+
+---
+
+### 2. Editar o módulo `sqlippool`
+
+Abra o arquivo `/etc/freeradius/3.0/mods-available/sqlippool` e configure o nome do pool:
+
+```text
+sql-instance-name = "sql"
+lease-duration = 3600
+pool-name = "main_pool"
+```
+
+---
+
+### 3. Ativar no site `default`
+
+Edite `/etc/freeradius/3.0/sites-enabled/default` e, dentro da seção `post-auth`, adicione:
+
+```text
+sqlippool
+```
+
+---
+
+### 4. Popular a tabela `radippool`
+
+A tabela `radippool` deve conter todos os IPs disponíveis para alocação. Exemplo:
+
+```sql
+INSERT INTO radippool (pool_name, framedipaddress) VALUES
+('main_pool', '10.0.0.2'),
+('main_pool', '10.0.0.3'),
+('main_pool', '10.0.0.4');
+```
+
+---
+
+### 5. Associar um usuário (ou grupo) ao pool
+
+Para usuários:
+
+```sql
+INSERT INTO radreply (username, attribute, op, value)
+VALUES ('cliente01', 'Framed-Pool', ':=', 'main_pool');
+```
+
+Para grupos (opcional):
+
+```sql
+INSERT INTO radgroupreply (groupname, attribute, op, value)
+VALUES ('plano_10mb', 'Framed-Pool', ':=', 'main_pool');
+```
+
+---
+
+### 6. Considerações finais
+
+- Certifique-se de que o NAS aceita IPs fornecidos via RADIUS (modo PPP ou DHCP via PPPoE).
+- O controle por pool é útil quando você **não deseja IP fixo por cliente**, mas quer garantir que os IPs entregues sejam gerenciados.
+
+---
+
+💡 Para usar essa funcionalidade, o desenvolvedor precisa garantir que o módulo `sqlippool` esteja habilitado e que a tabela `radippool` esteja devidamente populada com os IPs disponíveis.
+
+
 ## 📁 Extras
 
 Caso precise resetar o serviço:

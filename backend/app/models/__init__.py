@@ -8,3 +8,6 @@ from app.models.nas import Nas
 from app.models.radacct import RadAcct
 from app.models.radpostauth import RadPostAuth
 from app.models.radusergroup import RadUserGroup
+from app.models.radgroupcheck import RadGroupCheck
+from app.models.radgroupreply import RadGroupReply
+
