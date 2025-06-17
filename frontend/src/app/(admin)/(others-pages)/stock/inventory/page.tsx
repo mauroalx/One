@@ -17,7 +17,13 @@ export const metadata: Metadata = {
 export default function page() {
   return (
     <div>
-      <PageBreadcrumb pageTitle="Inventário" />
+      <PageBreadcrumb 
+      pageTitle="Inventário"
+        action={{
+            label: "Adicionar +",
+            href: "/stock/inventory/create",
+        }}        
+       />
       <Inventory />
     </div>
   );
