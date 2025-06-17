@@ -44,7 +44,7 @@ const navItems: NavItem[] = [
     icon: <TaskIcon />,
     name: "Suporte",
     subItems: [
-      { name: "Ordens de serviço", path: "/", pro: false },
+      { name: "Ordens de serviço", path: "/support/services", pro: false },
     ],
   },
   {
@@ -52,7 +52,7 @@ const navItems: NavItem[] = [
     name: "Estoque",
     subItems: [
       { name: "Unidades", path: "/stock/warehouse", pro: false },
-      { name: "Almoxarifado", path: "/estoque/almoxarifado", pro: false },
+      { name: "Inventário", path: "/stock/inventory", pro: false },
       { name: "Automações", path: "/estoque/automacoes", new: true },
     ],
   },

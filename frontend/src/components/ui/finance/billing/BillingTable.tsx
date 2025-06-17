@@ -3,18 +3,22 @@
 import React, { useEffect, useState } from "react";
 import {
   ArrowRight,
+  CheckCircle2,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  MessageCircleWarningIcon,
 } from "lucide-react";
 import { BillingFilter } from "@/components/finance/billing/Billing";
+import { Tooltip } from "../../tooltip/Tooltip";
+
 
 interface BillingItem {
   id: number;
   customer: string;
   dueDate: string;
-  status: "paid" | "pending" | "overdue" | "canceled";
+  status: "pago" | "pendente" | "vencido" | "cancelado";
   amount: number;
   gateway: string;
 }
@@ -27,7 +31,7 @@ const mockBillings: BillingItem[] = Array.from({ length: 20 }).map((_, i) => ({
   id: i + 1,
   customer: `Cliente ${i + 1}`,
   dueDate: "2025-06-14",
-  status: i % 4 === 0 ? "paid" : i % 4 === 1 ? "pending" : i % 4 === 2 ? "overdue" : "canceled",
+  status: i % 4 === 0 ? "pago" : i % 4 === 1 ? "pendente" : i % 4 === 2 ? "vencido" : "cancelado",
   amount: 49.9 + i,
   gateway: i % 2 === 0 ? "Asaas" : "Gerencianet",
 }));
@@ -85,10 +89,10 @@ const BillingTable: React.FC<Props> = ({ filters }) => {
     value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   const statusColor = {
-    paid: "text-green-600",
-    pending: "text-yellow-500",
-    overdue: "text-red-500",
-    canceled: "text-gray-400",
+    pago: "sucess",
+    pendente: "light",
+    vencido: "warning",
+    cancelado: "error",
   };
 
   return (
@@ -125,8 +129,11 @@ const BillingTable: React.FC<Props> = ({ filters }) => {
                     <td className="px-4 py-3">{b.customer}</td>
                     <td className="px-4 py-3">{b.dueDate}</td>
                     <td className="px-4 py-3">{formatCurrency(b.amount)}</td>
-                    <td className={`px-4 py-3 capitalize font-medium ${statusColor[b.status]}`}>
-                      {b.status}
+                    <td className={'px-4 py-3 capitalize font-medium  ' + statusColor[b.status]}>
+                        <Tooltip message="Pago com sucesso">
+                          <CheckCircle2 color="green"/>
+                        </Tooltip>
+                        {/* <MessageCircleWarningIcon /> */}
                     </td>
                     <td className="px-4 py-3">{b.gateway}</td>
                     <td className="px-4 py-3 text-right">

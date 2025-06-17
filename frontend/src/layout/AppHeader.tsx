@@ -2,12 +2,17 @@
 import { ThemeToggleButton } from "@/components/common/ThemeToggleButton";
 import NotificationDropdown from "@/components/header/NotificationDropdown";
 import UserDropdown from "@/components/header/UserDropdown";
+import QuickSearchDropdown from "@/components/ui/app/QuickSearchDropdown";
 import { useSidebar } from "@/context/SidebarContext";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState ,useEffect,useRef} from "react";
 
 const AppHeader: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<{
+    [key: string]: { id: string; label: string; href: string }[];
+  }>({});
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
@@ -144,7 +149,29 @@ const AppHeader: React.FC = () => {
                   ref={inputRef}
                   type="text"
                   placeholder="Busca rápida..."
-                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSearchQuery(value);
+
+                    // Simula resultados da busca
+                    if (value.trim() !== "") {
+                      setSearchResults({
+                        Clientes: [
+                          { id: "1", label: "Mauro Silva", href: "/customers/1" },
+                        ],
+                        Planos: [
+                          { id: "2", label: "Plano Mauro Ultra", href: "/plans/2" },
+                        ],
+                        Atendimentos: [
+                          { id: "3", label: "Atendimento #12345 - Mauro", href: "/support/orders/12345" },
+                        ],
+                      });
+                    } else {
+                      setSearchResults({});
+                    }
+                  }}
+                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
                 />
 
                 <button className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-gray-50 px-[7px] py-[4.5px] text-xs -tracking-[0.2px] text-gray-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400">
@@ -153,6 +180,15 @@ const AppHeader: React.FC = () => {
                 </button>
               </div>
             </form>
+            {searchQuery && Object.keys(searchResults).length > 0 && (
+              <QuickSearchDropdown
+                results={searchResults}
+                onClose={() => {
+                  setSearchQuery("");
+                  setSearchResults({});
+                }}
+              />
+            )}
           </div>
         </div>
         <div
