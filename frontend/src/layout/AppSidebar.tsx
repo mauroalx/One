@@ -21,6 +21,7 @@ import {
   UserCircleIcon,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
+import { CloudIcon, CreditCard, DollarSign } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -36,15 +37,27 @@ const navItems: NavItem[] = [
     subItems: [{ name: "Clientes", path: "/business/customers", pro: false }],
   },
   {
-    icon: <DollarLineIcon />,
+    icon: <CreditCard />,
     name: "Financeiro",
-    subItems: [{ name: "Cobranças", path: "/finance/billing", pro: false }],
+    subItems: [
+      { name: "Cobranças", path: "/finance/billing", pro: false },
+      { name: "Contas de cobrança", path: "/finance/billing-accounts", pro: false }
+    ],
   },
   {
     icon: <TaskIcon />,
     name: "Suporte",
     subItems: [
       { name: "Ordens de serviço", path: "/support/services", pro: false },
+    ],
+  },
+  {
+    icon: <CloudIcon />,
+    name: "Redes",
+    subItems: [
+      { name: "Concentradores", path: "/network/broadband-network-gateway", pro: false },
+      { name: "Pool IP", path: "/network/pools", pro: false },
+      { name: "Logs radius", path: "/network/radius-logs", pro: false },
     ],
   },
   {
