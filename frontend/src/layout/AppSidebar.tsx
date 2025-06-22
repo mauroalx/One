@@ -34,7 +34,11 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Comercial",
-    subItems: [{ name: "Clientes", path: "/business/customers", pro: false }],
+    subItems: [
+      { name: "Clientes", path: "/business/customers", pro: false },
+      { name: "Contratos", path: "/business/contracts", pro: false }
+
+    ],
   },
   {
     icon: <CreditCard />,

@@ -4,6 +4,7 @@
 
 import React, { useState } from "react";
 import CustomerDetailGeneral from "./CustomerDetailGeneral";
+import { CustomerInternetPanel } from "./internet/CustomerInternetPanel";
 
 const tabs = [
   { key: "info", label: "Dados gerais" },
@@ -47,9 +48,10 @@ export default function CustomerDetail({params}: {params: {id: string}}) {
           </div>
         )}
         {activeTab === "internet" && (
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Informações de Internet</h3>
+          <div className="w-full min-w-[200px]  mx-auto">
+            {/* <h3 className="text-lg font-semibold mb-2">Informações de Internet</h3> */}
             {/* Conteúdo futuro */}
+            <CustomerInternetPanel />
           </div>
         )}
         {activeTab === "finance" && (
