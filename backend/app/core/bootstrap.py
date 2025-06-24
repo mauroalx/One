@@ -23,7 +23,7 @@ async def bootstrap(db: AsyncSession):
             name=ADMIN_ROLE_NAME,
             description="Administrador do sistema",
             permissions={
-                "geral": {"*": True},
+                "admin": {"*": True},
             }
         )
         db.add(role)

@@ -1,4 +1,5 @@
-import { CalendarDays, Search } from "lucide-react";
+import React, { useState } from "react";
+import { CalendarDays, Search, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface RadiusLog {
   user: string;
@@ -44,9 +45,17 @@ const radiusLogs: RadiusLog[] = [
     protocol: "PPP",
     disconnectReason: "Lost-Carrier",
   },
+  // aqui depois tu pode alimentar com mais registros reais
 ];
 
 export const CustomerInternetRadiusLogs: React.FC = () => {
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  const totalPages = Math.ceil(radiusLogs.length / pageSize);
+  const paginatedLogs = radiusLogs.slice((page - 1) * pageSize, page * pageSize);
+
   return (
     <div className="space-y-6">
       {/* Header de filtros */}
@@ -68,46 +77,85 @@ export const CustomerInternetRadiusLogs: React.FC = () => {
         </div>
       </div>
 
-      {/* TABELA NATIVA */}
-<div className="w-full overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
-  <table className="w-full text-sm text-left text-gray-800 dark:text-white table-fixed">
-    <thead className="bg-white dark:bg-white/5 text-xs font-semibold text-gray-700 dark:text-white uppercase tracking-wide">
-      <tr>
-        <th className="px-4 py-3 w-[160px]">Usuário</th>
-        <th className="px-4 py-3 w-[140px]">MAC</th>
-        <th className="px-4 py-3 w-[160px]">Conectou</th>
-        <th className="px-4 py-3 w-[160px]">Desconectou</th>
-        <th className="px-4 py-3 w-[140px]">IP</th>
-        <th className="px-4 py-3 w-[220px]">NAS Port</th>
-        <th className="px-4 py-3 w-[140px]">NAS IP</th>
-        <th className="px-4 py-3 w-[140px]">CGNAT IP</th>
-        <th className="px-4 py-3 w-[100px]">Porta Início</th>
-        <th className="px-4 py-3 w-[100px]">Porta Fim</th>
-        <th className="px-4 py-3 w-[100px]">Protocolo</th>
-        <th className="">Motivo Desc.</th>
-      </tr>
-    </thead>
-    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-      {radiusLogs.map((log, idx) => (
-        <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-white/5">
-          <td className="px-4 py-3 truncate">{log.user}</td>
-          <td className="px-4 py-3 truncate">{log.mac}</td>
-          <td className="px-4 py-3 truncate">{log.connected}</td>
-          <td className="px-4 py-3 truncate">{log.disconnected}</td>
-          <td className="px-4 py-3 truncate">{log.ip}</td>
-          <td className="px-4 py-3 truncate">{log.nasPort}</td>
-          <td className="px-4 py-3 truncate">{log.nasIp}</td>
-          <td className="px-4 py-3 truncate">{log.cgnatPublicIp}</td>
-          <td className="px-4 py-3 truncate">{log.cgnatStartPort}</td>
-          <td className="px-4 py-3 truncate">{log.cgnatEndPort}</td>
-          <td className="px-4 py-3 truncate">{log.protocol}</td>
-          <td className="">{log.disconnectReason || "-"}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+      {/* Tabela com collapse */}
+      <div className="w-full overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+        <table className="w-full text-sm text-left text-gray-800 dark:text-white">
+          <thead className="bg-white dark:bg-white/5 text-xs font-semibold text-gray-700 dark:text-white uppercase tracking-wide">
+            <tr>
+              <th className="px-4 py-3">Usuário</th>
+              <th className="px-4 py-3">MAC</th>
+              <th className="px-4 py-3">IP</th>
+              <th className="px-4 py-3">NAS IP</th>
+              <th className="px-4 py-3 text-right">Ações</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            {paginatedLogs.map((log, idx) => {
+              const realIndex = (page - 1) * pageSize + idx;
+              return (
+                <React.Fragment key={realIndex}>
+                  <tr className="hover:bg-gray-50 dark:hover:bg-white/5">
+                    <td className="px-4 py-3 font-mono text-xs">{log.user}</td>
+                    <td className="px-4 py-3 font-mono text-xs">{log.mac}</td>
+                    <td className="px-4 py-3 font-mono text-xs">{log.ip}</td>
+                    <td className="px-4 py-3 font-mono text-xs">{log.nasIp}</td>
+                    <td className="px-4 py-3 text-right">
+                      <button 
+                        className="text-blue-500 text-xs"
+                        onClick={() => setExpandedRow(expandedRow === realIndex ? null : realIndex)}
+                      >
+                        {expandedRow === realIndex ? "Esconder" : "Detalhes"}
+                      </button>
+                    </td>
+                  </tr>
 
+                  {expandedRow === realIndex && (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-3 bg-gray-50 dark:bg-gray-800">
+                        <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                          <div><b>Conectou:</b> {log.connected}</div>
+                          <div><b>Desconectou:</b> {log.disconnected}</div>
+                          <div><b>NAS Port:</b> {log.nasPort}</div>
+                          <div><b>CGNAT IP:</b> {log.cgnatPublicIp}</div>
+                          <div><b>Porta Início:</b> {log.cgnatStartPort}</div>
+                          <div><b>Porta Fim:</b> {log.cgnatEndPort}</div>
+                          <div><b>Protocolo:</b> {log.protocol}</div>
+                          <div><b>Motivo Desc.:</b> {log.disconnectReason || "-"}</div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Paginação */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between px-2 pt-2">
+          <span className="text-sm text-gray-500 dark:text-gray-400">
+            Página {page} de {totalPages}
+          </span>
+          <div className="flex gap-1">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -10,4 +10,7 @@ from app.models.radpostauth import RadPostAuth
 from app.models.radusergroup import RadUserGroup
 from app.models.radgroupcheck import RadGroupCheck
 from app.models.radgroupreply import RadGroupReply
+from app.models.customer import Customer, CustomerType
+from app.models.contract import Contract, ContractStatus, ContractType
+from app.models.customer_contract import CustomerContract
 

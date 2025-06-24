@@ -8,6 +8,8 @@ import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Toolbar from "./RichTextEditorToolbar";
 import clsx from "clsx";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const variables = [
   "$nome_completo",
@@ -22,6 +24,9 @@ const variables = [
 const ContractsCardsCreate: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const { token } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();  // importa do next/navigation
   const [form, setForm] = useState({
     name: "",
     months: "12",
@@ -45,6 +50,43 @@ const ContractsCardsCreate: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async () => {
+    if (!editor) return;
+
+    setIsSubmitting(true); // inicia loading
+
+    const payload = {
+      name: form.name,
+      type: form.type,
+      months: parseInt(form.months),
+      content: editor.getHTML(),
+      status: "draft"
+    };
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/v1/contract/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error("Erro ao criar contrato");
+
+      const data = await res.json();
+      console.log("Contrato criado:", data);
+
+      router.push("/business/contracts");
+    } catch (err) {
+      console.error(err);
+      alert("Falha ao criar contrato.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const insertVariable = (variable: string) => {
@@ -87,11 +129,11 @@ const ContractsCardsCreate: React.FC = () => {
             className="inline-flex items-center justify-center h-9 px-4 text-sm font-medium text-white bg-brand-500 rounded-lg dark:bg-gray-600 hover:bg-brand-600 dark:hover:bg-brand-500 transition"
             onClick={() => setIsFullscreen(!isFullscreen)}
           >
-            {isFullscreen ? <><Minimize2 className="w-4 h-4 mr-2" /> Sair Fullscreen</> : <><Maximize2 className="w-4 h-4 mr-2" /> Tela Cheia</>}
+            {isFullscreen ? <><Minimize2 className="w-4 h-4 mr-2" /> Sair da tela cheia</> : <><Maximize2 className="w-4 h-4 mr-2" /> Tela Cheia</>}
           </button>
-          <button className="inline-flex items-center justify-center h-9 px-4 text-sm font-medium text-white bg-brand-500 rounded-lg dark:bg-gray-600 hover:bg-brand-600 dark:hover:bg-brand-500 transition">
+          {!isFullscreen ? <button onClick={handleSubmit} className="inline-flex items-center justify-center h-9 px-4 text-sm font-medium text-white bg-brand-500 rounded-lg dark:bg-gray-600 hover:bg-brand-600 dark:hover:bg-brand-500 transition">
             <Plus className="w-4 h-4 mr-2" /> Salvar Modelo
-          </button>
+          </button> : null}
         </div>
       </div>
 
@@ -138,7 +180,7 @@ const ContractsCardsCreate: React.FC = () => {
             >
               <option value="PF">Pessoa Física (PF)</option>
               <option value="PJ">Pessoa Jurídica (PJ)</option>
-              <option value="Customizado">Customizado</option>
+              <option value="custom">Customizado</option>
             </select>
           </div>
         </div>

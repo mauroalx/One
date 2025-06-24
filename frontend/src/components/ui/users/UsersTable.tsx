@@ -1,9 +1,10 @@
-// components/business/users/UsersTable.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
 import { ArrowRight, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from "lucide-react";
 import { UserFilter } from "@/components/auth/users/Users";
+import { stringToColor } from "@/utils/generators";
+import { useIsDarkMode } from "@/components/common/useIsDarkMode";
 
 interface Props {
   filters: UserFilter | null;
@@ -26,11 +27,14 @@ const mockUsers: User[] = Array.from({ length: 17 }).map((_, i) => ({
 const ITEMS_PER_PAGE = 6;
 type SortKey = keyof User;
 
+
 const UsersTable: React.FC<Props> = ({ filters }) => {
   const [results, setResults] = useState<User[]>([]);
   const [page, setPage] = useState(1);
   const [sortKey, setSortKey] = useState<SortKey>("id");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const isDark = useIsDarkMode()
+
 
   useEffect(() => {
     const filtered = filters
@@ -43,7 +47,7 @@ const UsersTable: React.FC<Props> = ({ filters }) => {
               : true
           )
         )
-      : [];
+      : mockUsers;
 
     setResults(filtered);
     setPage(1);
@@ -80,6 +84,7 @@ const UsersTable: React.FC<Props> = ({ filters }) => {
             <table className="min-w-full text-sm text-left text-gray-800 dark:text-white">
               <thead>
                 <tr className="bg-white dark:bg-white/5 text-xs font-semibold text-gray-700 dark:text-white uppercase tracking-wide border-b dark:border-gray-800">
+                  <th className="px-4 py-3"></th> {/* Avatar */}
                   <th className="px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("id")}>
                     <div className="inline-flex items-center gap-1">
                       ID {sortKey === "id" ? (sortOrder === "asc" ? <ChevronUp size={14} /> : <ChevronDown size={14} />) : null}
@@ -98,6 +103,14 @@ const UsersTable: React.FC<Props> = ({ filters }) => {
               <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                 {paginated.map((u) => (
                   <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
+                    <td className="px-4 py-3">
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white shadow"
+                        style={{ backgroundColor: stringToColor(u.name + u.email, isDark) }}
+                      >
+                        {u.name.charAt(0).toUpperCase()}
+                      </div>
+                    </td>
                     <td className="px-4 py-3">{u.id}</td>
                     <td className="px-4 py-3">{u.name}</td>
                     <td className="px-4 py-3">{u.email}</td>

@@ -1,38 +1,41 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus, Pencil, CalendarDays } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface ContractModel {
   id: number;
   name: string;
-  type: "PF" | "PJ" | "Customizado";
+  type: string; // agora pode ser enum futuro
   months: number;
-  createdAt: string;
-  updatedAt: string;
+  content: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }
 
-const mockContracts: ContractModel[] = [
-  {
-    id: 1,
-    name: "Contrato Padrão de Prestação de Serviços Banda Larga Residencial Ultra Plus Master Max 500MB com termos de aceite eletrônico e cláusula adicional de responsabilidade",
-    type: "PF",
-    months: 12,
-    createdAt: "2025-06-10",
-    updatedAt: "2025-06-18",
-  },
-  {
-    id: 2,
-    name: "Contrato Corporativo Avançado com SLA e Suporte Dedicado",
-    type: "PJ",
-    months: 24,
-    createdAt: "2025-05-02",
-    updatedAt: "2025-06-15",
-  },
-];
 
 const ContractsCards: React.FC = () => {
-  const [contracts, setContracts] = useState<ContractModel[]>(mockContracts);
+  const [contracts, setContracts] = useState<ContractModel[]>([]);
+  const { token } = useAuth();
+
+  useEffect(() => {
+    const fetchContracts = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/v1/contract/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error("Erro ao buscar contratos");
+        const data = await res.json();
+        setContracts(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchContracts();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -78,11 +81,11 @@ const ContractsCards: React.FC = () => {
             <div className="flex justify-between items-center mt-auto text-xs text-gray-500 dark:text-gray-400">
               <div className="flex items-center gap-1">
                 <CalendarDays className="w-4 h-4" />
-                Criado: {contract.createdAt}
+                Criado: {new Date(contract.created_at).toLocaleDateString()}
               </div>
               <div className="flex items-center gap-1">
                 <CalendarDays className="w-4 h-4" />
-                Atualizado: {contract.updatedAt}
+                Atualizado: {new Date(contract.updated_at).toLocaleDateString()}
               </div>
             </div>
 

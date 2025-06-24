@@ -6,11 +6,13 @@ import React, { useState } from "react";
 export interface CustomerFilter {
   name: string;
   email: string;
-  status: string;
-  serial: string;
-  login: string;
-  mac: string;
   cpfcnpj: string;
+
+  // futuros:
+  // status?: string;
+  // serial?: string;
+  // login?: string;
+  // mac?: string;
 }
 
 const Customers: React.FC = () => {
