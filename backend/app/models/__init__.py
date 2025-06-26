@@ -13,4 +13,8 @@ from app.models.radgroupreply import RadGroupReply
 from app.models.customer import Customer, CustomerType
 from app.models.contract import Contract, ContractStatus, ContractType
 from app.models.customer_contract import CustomerContract
+from app.models.customer_service import CustomerService, CustomerServiceStatus
+from app.models.billing_account import BillingAccount, BillingAccountStatus, FineType, InterestType
+from app.models.billing import Billing, BillingStatus
+from app.models.plan import Plan, PlanStatus
 

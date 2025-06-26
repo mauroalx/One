@@ -10,6 +10,19 @@
   }
 }
 
+
+/* Oculta as setas dos inputs type="number" no Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Oculta as setas no Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .toolbar-btn {
   @apply flex items-center justify-center w-8 h-8 rounded hover:bg-gray-100 dark:hover:bg-white/10 transition text-gray-700 dark:text-white;
 }

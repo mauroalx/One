@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str = "postgres"
     POSTGRES_PORT: int = 5432
     SECRET_KEY: str | None = "padraokey"
+    AUTO_POPULATE: bool = False
 
     @property
     def DATABASE_URL(self):

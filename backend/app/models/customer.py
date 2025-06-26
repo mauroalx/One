@@ -15,12 +15,12 @@ class Customer(Base):
 
     type = Column(Enum(CustomerType), nullable=False, default=CustomerType.individual)
 
-    full_name = Column(String, nullable=False)           # Nome completo (obrigatório sempre)
-    trade_name = Column(String)                           # Nome fantasia (para empresas, opcional)
-    legal_name = Column(String)                           # Razão social (para empresas, opcional)
-    document = Column(String, nullable=False, unique=True, index=True)  # CPF ou CNPJ
+    full_name = Column(String, nullable=False)
+    trade_name = Column(String)
+    legal_name = Column(String)
+    document = Column(String, nullable=False, unique=True, index=True)
 
-    rg = Column(String)                                   # Documento de identidade (para PF)
+    rg = Column(String)
     mother_name = Column(String)
     father_name = Column(String)
 
@@ -40,3 +40,5 @@ class Customer(Base):
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    services = relationship("CustomerService", back_populates="customer")

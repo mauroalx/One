@@ -45,7 +45,8 @@ const navItems: NavItem[] = [
     name: "Financeiro",
     subItems: [
       { name: "Cobranças", path: "/finance/billing", pro: false },
-      { name: "Contas de cobrança", path: "/finance/billing-accounts", pro: false }
+      { name: "Contas de cobrança", path: "/finance/billing-accounts", pro: false },
+      { name: "Planos de internet", path: "/finance/plans", pro: false },
     ],
   },
   {

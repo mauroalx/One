@@ -5,6 +5,8 @@ from app.middlewares.extract_user import ExtractUserMiddleware
 from app.api import api_router
 from app.core.db import get_db
 from app.core.bootstrap import bootstrap
+from app.core.seeders import run_seeders   
+from app.core.config import settings  # seu settings já lê do .env
 import asyncio
 
 app = FastAPI(title="One ERP")
@@ -25,4 +27,7 @@ app.include_router(api_router)
 async def on_startup():
     async for db in get_db():
         await bootstrap(db)
+        
+        if settings.AUTO_POPULATE:
+            await run_seeders(db)
         break

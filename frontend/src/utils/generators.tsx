@@ -12,7 +12,13 @@ const stringToColor = (str: string, isDark: boolean): string => {
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
+const applyMask = (value: string, mask: string): string => {
+  let i = 0;
+  const numeric = value.replace(/\D/g, '');
+  return mask.replace(/9/g, () => numeric[i++] ?? '');
+};
 
 export {
-  stringToColor
+  stringToColor,
+  applyMask
 };
