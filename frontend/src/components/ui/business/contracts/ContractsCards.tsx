@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Plus, Pencil, CalendarDays } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface ContractModel {
   id: number;
@@ -19,6 +20,7 @@ interface ContractModel {
 const ContractsCards: React.FC = () => {
   const [contracts, setContracts] = useState<ContractModel[]>([]);
   const { token } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchContracts = async () => {
@@ -91,7 +93,9 @@ const ContractsCards: React.FC = () => {
 
             {/* Botão */}
             <div className="mt-4 flex justify-end">
-              <button className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-white/10 rounded-lg text-sm font-medium text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-white/20 transition">
+              <button
+              onClick={() => router.push(`/business/contracts/${contract.id}`)}
+              className="flex items-center gap-2 px-3 py-2 bg-gray-100 dark:bg-white/10 rounded-lg text-sm font-medium text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-white/20 transition">
                 <Pencil className="w-4 h-4 text-brand-500" /> Editar
               </button>
             </div>

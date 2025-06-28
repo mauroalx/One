@@ -28,3 +28,16 @@ class CustomerContractUpdateSignedAt(BaseModel):
     model_config = {
         "extra": "forbid"
     }
+
+class CustomerContractFullOut(BaseModel):
+    id: int
+    final_text: str
+    text_hash: str
+    signed_at: datetime | None
+    created_at: datetime
+    updated_at: datetime
+
+    login_pppoe: str
+    plan_name: str
+
+    model_config = {"from_attributes": True}

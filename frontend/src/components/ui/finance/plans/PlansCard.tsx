@@ -2,59 +2,21 @@
 
 import React, { useState, useEffect } from 'react'
 import { Zap, Download, Upload } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
+import { Plan } from '@/components/finance/plans/Plans';
+import { useRouter } from 'next/navigation';
 
-interface Plan {
-  id: number
-  name: string
-  description?: string
-  price: number
-  download_speed: number
-  upload_speed: number
-  status: string
+
+interface PlansCardProps {
+  plans: Plan[];
 }
 
-const mockPlans: Plan[] = [
-  {
-    id: 1,
-    name: 'Fibra 200MB',
-    description: 'Ideal para casas pequenas. Inclui modem grátis.',
-    price: 79.9,
-    download_speed: 200,
-    upload_speed: 100,
-    status: 'active',
-  },
-  {
-    id: 2,
-    name: 'Fibra 400MB',
-    description: 'Perfeito para streamings e trabalho remoto.',
-    price: 99.9,
-    download_speed: 400,
-    upload_speed: 200,
-    status: 'active',
-  },
-  {
-    id: 3,
-    name: 'Fibra 600MB',
-    description: 'Alta performance para múltiplos dispositivos.',
-    price: 129.9,
-    download_speed: 600,
-    upload_speed: 300,
-    status: 'inactive',
-  },
-  {
-    id: 4,
-    name: 'Fibra 1GB',
-    description: 'Plano ultra veloz para gamers e empresas.',
-    price: 199.9,
-    download_speed: 1000,
-    upload_speed: 500,
-    status: 'active',
-  },
-]
 
-export default function PlansCard() {
+
+export default function PlansCard({ plans }: PlansCardProps) {
   const [visibleCount, setVisibleCount] = useState(3)
-  const visiblePlans = mockPlans.slice(0, visibleCount)
+  const visiblePlans = plans.slice(0, visibleCount);
+  const router = useRouter();
 
   const loadMore = () => setVisibleCount((prev) => prev + 3)
 
@@ -63,6 +25,8 @@ export default function PlansCard() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {visiblePlans.map((plan) => (
           <div
+            style={{cursor: 'pointer'}}
+            onClick={() => router.push(`/finance/plans/${plan.id}`)}
             key={plan.id}
             className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 shadow-sm hover:shadow-md transition"
           >
@@ -101,7 +65,7 @@ export default function PlansCard() {
           </div>
         ))}
       </div>
-      {visibleCount < mockPlans.length && (
+      {visibleCount < plans.length && (
         <div className="flex justify-center">
           <button
             onClick={loadMore}

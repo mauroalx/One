@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, constr
-from typing import Literal
+from typing import Literal, Optional
 from datetime import datetime
 
 
@@ -17,6 +17,17 @@ class BillingAccountCreate(BaseModel):
 
     model_config = {"extra": "forbid"}
 
+
+class BillingAccountUpdate(BaseModel):
+    name: Optional[str] = None
+    provider: Optional[str] = None
+    fine_percent: Optional[float] = None
+    fine_type: Optional[Literal["daily", "monthly"]] = None
+    interest_percent: Optional[float] = None
+    interest_type: Optional[Literal["daily", "monthly"]] = None
+    status: Optional[Literal["active", "inactive", "archived"]] = None
+
+    model_config = {"extra": "forbid"}
 
 class BillingAccountOut(BaseModel):
     id: int

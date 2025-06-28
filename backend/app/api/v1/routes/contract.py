@@ -1,15 +1,19 @@
+import tempfile
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
+from fastapi.responses import FileResponse
 from app.core.db import get_db
 from app.models.contract import Contract
 from app.models.customer_contract import CustomerContract
+from app.models.customer_service import CustomerService
+from app.models.plan import Plan
 from app.schemas.contract import (
-    ContractCreate, ContractUpdate, ContractOut,
+    ContractCreate, ContractUpdate, ContractOut
 )
 from app.schemas.customer_contract import (
-    CustomerContractCreate, CustomerContractOut, CustomerContractUpdateSignedAt,
+    CustomerContractCreate, CustomerContractOut, CustomerContractUpdateSignedAt, CustomerContractFullOut
 )
 from typing import List
 
@@ -71,11 +75,33 @@ async def create_customer_contract(contract_data: CustomerContractCreate, db: As
         raise HTTPException(status_code=400, detail="Error creating customer contract")
     return CustomerContractOut.from_orm(contract)
 
-@router.get("/customer/", response_model=List[CustomerContractOut])
-async def list_customer_contracts(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(CustomerContract))
-    contracts = result.scalars().all()
-    return [CustomerContractOut.from_orm(c) for c in contracts]
+@router.get("/customer/{customer_id}", response_model=List[CustomerContractFullOut])
+async def list_contracts_by_customer(
+    customer_id: int,
+    db: AsyncSession = Depends(get_db)
+):
+    stmt = (
+        select(
+            CustomerContract,
+            CustomerService.login_pppoe,
+            Plan.name.label("plan_name")
+        )
+        .join(CustomerService, CustomerContract.customer_service_id == CustomerService.id)
+        .join(Plan, CustomerService.plan_id == Plan.id)
+        .where(CustomerService.customer_id == customer_id)
+    )
+
+    result = await db.execute(stmt)
+    rows = result.all()
+
+    return [
+        CustomerContractFullOut(
+            **row[0].__dict__,  # CustomerContract fields
+            login_pppoe=row.login_pppoe,
+            plan_name=row.plan_name,
+        )
+        for row in rows
+    ]
 
 @router.get("/customer/{contract_id}", response_model=CustomerContractOut)
 async def get_customer_contract(contract_id: int, db: AsyncSession = Depends(get_db)):
@@ -99,3 +125,21 @@ async def sign_customer_contract(
     await db.commit()
     await db.refresh(contract)
     return CustomerContractOut.from_orm(contract)
+
+# Download customer contract
+@router.get("/{contract_id}/download")
+async def download_contract(contract_id: int, db: AsyncSession = Depends(get_db)):
+    contract = await db.get(CustomerContract, contract_id)
+    if not contract:
+        raise HTTPException(status_code=404, detail="Contrato não encontrado")
+
+    # Criar arquivo temporário em diretório do sistema
+    with tempfile.NamedTemporaryFile("w", delete=False, suffix=".docx") as tmp:
+        tmp.write(contract.final_text)
+        tmp_path = tmp.name  # caminho completo do arquivo criado
+
+    return FileResponse(
+        tmp_path,
+        filename=f"Contrato_{contract_id}.docx",
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )

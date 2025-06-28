@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { CustomerInternetLogins } from "./CustomerInternetLogins";
 import { CustomerInternetRadiusLogs } from "./CustomerInternetRadiusLogs";
+import { CustomerInternetContractsList } from "./CustomerInternetContractsList";
 
 const internetTabs = [
   { key: "logins", label: "Logins" },
   { key: "radius", label: "Radius" },
   { key: "devices", label: "Equipamentos" },
+  { key: "contracts", label: "Contratos" },
 ];
 
 
@@ -36,6 +38,7 @@ export const CustomerInternetPanel: React.FC = () => {
       <div>
         {activeInternetTab === "logins" && <CustomerInternetLogins />}
         {activeInternetTab === "radius" && <CustomerInternetRadiusLogs />}
+        {activeInternetTab === "contracts" && <CustomerInternetContractsList />}
         {/* {activeInternetTab === "devices" && <CustomerInternetDevices />} */}
       </div>
     </div>

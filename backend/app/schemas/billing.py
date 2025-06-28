@@ -17,6 +17,7 @@ class BillingCreate(BaseModel):
     status: Literal["pending", "paid", "canceled", "failed"] = "pending"
 
     model_config = {"extra": "forbid"}
+    
 
 
 class BillingOut(BaseModel):

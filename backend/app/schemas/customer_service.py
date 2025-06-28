@@ -1,6 +1,8 @@
 from pydantic import BaseModel, constr
-from typing import Optional, Literal
+from typing import Optional, Literal, List
 from datetime import datetime
+from .plan import PlanOut
+from .customer_contract import CustomerContractOut
 
 
 class CustomerServiceCreate(BaseModel):
@@ -21,14 +23,11 @@ class CustomerServiceOut(BaseModel):
     id: int
     customer_id: int
     plan_id: int
-
     login_pppoe: str
     password_pppoe: str
     subscriber_password: str
-
     description: Optional[str]
     status: str
-
     created_at: datetime
     updated_at: datetime
 

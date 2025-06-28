@@ -13,8 +13,8 @@ const tabs = [
   { key: "support", label: "Atendimentos" },
 ];
 
-export default function CustomerDetail({params}: {params: {id: string}}) {
-  const customerId = params.id; // Use this ID to fetch customer data if needed
+export default function CustomerDetail({id}: { id: string }) {
+  const customerId = id; // Use this ID to fetch customer data if needed
   const [activeTab, setActiveTab] = useState("info");
 
   return (

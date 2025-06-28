@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select
-from typing import List
+from typing import List, Optional
 
 from app.core.db import get_db
 from app.utils.constants import PAYMENT_PROVIDERS
@@ -13,7 +13,7 @@ from app.models.billing_account import BillingAccount
 from app.models.plan import Plan
 from app.models.billing import Billing
 from app.models import CustomerService
-from app.schemas.billing_account import BillingAccountCreate, BillingAccountOut
+from app.schemas.billing_account import BillingAccountCreate, BillingAccountOut, BillingAccountUpdate
 from app.schemas.plan import PlanCreate, PlanUpdate, PlanOut
 from app.schemas.billing import BillingCreate, BillingOut
 
@@ -28,7 +28,7 @@ async def get_payment_providers():
 
 # --------------------- Billing Accounts ---------------------
 
-@router.post("/billing_accounts", response_model=BillingAccountOut)
+@router.post("/billing-accounts", response_model=BillingAccountOut)
 async def create_billing_account(data: BillingAccountCreate, db: AsyncSession = Depends(get_db)):
     billing_account = BillingAccount(**data.dict())
     db.add(billing_account)
@@ -40,16 +40,67 @@ async def create_billing_account(data: BillingAccountCreate, db: AsyncSession = 
         raise HTTPException(status_code=400, detail="Error creating billing account")
     return BillingAccountOut.from_orm(billing_account)
 
-@router.get("/billing_accounts", response_model=List[BillingAccountOut])
+
+@router.get("/billing-accounts", response_model=List[BillingAccountOut])
 async def list_billing_accounts(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(BillingAccount))
     return [BillingAccountOut.from_orm(b) for b in result.scalars().all()]
 
-@router.get("/billing_accounts/{billing_account_id}", response_model=BillingAccountOut)
+
+@router.get("/billing-accounts/{billing_account_id}", response_model=BillingAccountOut)
 async def get_billing_account(billing_account_id: int, db: AsyncSession = Depends(get_db)):
     billing_account = await db.get(BillingAccount, billing_account_id)
     if not billing_account:
         raise HTTPException(status_code=404, detail="Billing account not found")
+    return BillingAccountOut.from_orm(billing_account)
+
+
+@router.put("/billing-accounts/{billing_account_id}", response_model=BillingAccountOut)
+async def update_billing_account(
+    billing_account_id: int,
+    data: BillingAccountUpdate,  # Agora usa schema de atualização
+    db: AsyncSession = Depends(get_db)
+):
+    billing_account = await db.get(BillingAccount, billing_account_id)
+    if not billing_account:
+        raise HTTPException(status_code=404, detail="Billing account not found")
+
+    for key, value in data.dict(exclude_unset=True).items():
+        setattr(billing_account, key, value)
+
+    try:
+        await db.commit()
+        await db.refresh(billing_account)
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(status_code=400, detail="Error updating billing account")
+
+    return BillingAccountOut.from_orm(billing_account)
+
+
+@router.patch("/billing-accounts/{billing_account_id}", response_model=BillingAccountOut)
+async def update_billing_account_status(
+    billing_account_id: int,
+    status_payload: dict,  # Alternativa rápida, ou pode criar schema específico
+    db: AsyncSession = Depends(get_db)
+):
+    billing_account = await db.get(BillingAccount, billing_account_id)
+    if not billing_account:
+        raise HTTPException(status_code=404, detail="Billing account not found")
+
+    new_status = status_payload.get("status")
+    if new_status not in ["active", "inactive", "archived"]:
+        raise HTTPException(status_code=400, detail="Invalid status value")
+
+    billing_account.status = new_status
+
+    try:
+        await db.commit()
+        await db.refresh(billing_account)
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(status_code=400, detail="Error updating billing account status")
+
     return BillingAccountOut.from_orm(billing_account)
 
 # --------------------- Plans ---------------------
@@ -67,9 +118,27 @@ async def create_plan(data: PlanCreate, db: AsyncSession = Depends(get_db)):
     return PlanOut.from_orm(plan)
 
 @router.get("/plans", response_model=List[PlanOut])
-async def list_plans(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Plan))
+async def list_plans(
+    name: Optional[str] = Query(None),
+    status: Optional[str] = Query(None),
+    min_download: Optional[int] = Query(None),
+    max_price: Optional[float] = Query(None),
+    db: AsyncSession = Depends(get_db),
+):
+    query = select(Plan)
+
+    if name:
+        query = query.where(Plan.name.ilike(f"%{name}%"))
+    if status:
+        query = query.where(Plan.status == status)
+    if min_download is not None:
+        query = query.where(Plan.download_speed >= min_download)
+    if max_price is not None:
+        query = query.where(Plan.price <= max_price)
+
+    result = await db.execute(query)
     return [PlanOut.from_orm(p) for p in result.scalars().all()]
+
 
 @router.get("/plans/{plan_id}", response_model=PlanOut)
 async def get_plan(plan_id: int, db: AsyncSession = Depends(get_db)):

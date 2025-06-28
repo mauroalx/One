@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
+import traceback
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import selectinload
 from datetime import datetime
 import hashlib
 from app.core.db import get_db
@@ -11,6 +13,7 @@ from app.schemas.customer_service import CustomerServiceCreate, CustomerServiceO
 from app.schemas.response import ErrorResponse
 from app.core.decorators import require_auth
 from typing import Optional, List
+
 
 router = APIRouter()
 
@@ -136,11 +139,20 @@ async def create_customer_service(
         await db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/services", response_model=List[CustomerServiceOut])
-async def list_customer_services(
+
+
+@router.get("/{customer_id}/services", response_model=List[CustomerServiceOut])
+async def list_customer_services_by_customer(
+    customer_id: int,
     db: AsyncSession = Depends(get_db)
 ):
-    result = await db.execute(select(CustomerService))
+    stmt = select(CustomerService).options(
+        selectinload(CustomerService.plan),
+        selectinload(CustomerService.contracts),
+    )
+    if customer_id:
+        stmt = stmt.where(CustomerService.customer_id == customer_id)
+    result = await db.execute(stmt)
     return [CustomerServiceOut.from_orm(s) for s in result.scalars().all()]
 
 @router.get("/services/{service_id}", response_model=CustomerServiceOut)

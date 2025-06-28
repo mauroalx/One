@@ -3,7 +3,16 @@
 
 import React, { useState } from 'react';
 
-const PlansFilterHeader: React.FC = () => {
+interface PlansFilterHeaderProps {
+  onSearch: (filters: {
+    name: string;
+    status: string;
+    minDownload: string;
+    maxPrice: string;
+  }) => void;
+}
+
+const PlansFilterHeader: React.FC<PlansFilterHeaderProps> = ({ onSearch }) => {
   const [filters, setFilters] = useState({
     name: '',
     status: '',
@@ -16,8 +25,7 @@ const PlansFilterHeader: React.FC = () => {
   };
 
   const handleSearch = () => {
-    // Em breve: lógica de busca
-    console.log(filters);
+    onSearch(filters); // envia para o componente pai
   };
 
   return (
@@ -51,8 +59,8 @@ const PlansFilterHeader: React.FC = () => {
             className="h-10 px-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
           >
             <option value="">Todos</option>
-            <option value="enabled">Ativo</option>
-            <option value="disabled">Desativado</option>
+            <option value="active">Ativo</option>
+            <option value="inactive">Desativado</option>
           </select>
         </div>
 
