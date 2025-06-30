@@ -8,6 +8,7 @@ import {
   BoxCubeIcon,
   CalenderIcon,
   ChevronDownIcon,
+  DocsIcon,
   DollarLineIcon,
   GridIcon,
   HorizontaLDots,
@@ -21,7 +22,7 @@ import {
   UserCircleIcon,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
-import { CloudIcon, CreditCard, DollarSign } from "lucide-react";
+import { CloudIcon, CreditCard, DollarSign, PcCaseIcon } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -124,14 +125,13 @@ const othersItems: NavItem[] = [
       { name: "API", path: "/auth/api", new: true },
     ],
   },
-  // {
-  //   icon: <PlugInIcon />,
-  //   name: "Authentication",
-  //   subItems: [
-  //     { name: "Sign In", path: "/signin", pro: false },
-  //     { name: "Sign Up", path: "/signup", pro: false },
-  //   ],
-  // },
+  {
+    icon: <PcCaseIcon />,
+    name: "Sistema",
+    subItems: [
+      { name: "Endereços", path: "/system/addresses", pro: false },
+    ],
+  },
 ];
 
 const AppSidebar: React.FC = () => {

@@ -31,3 +31,4 @@ class CustomerService(Base):
     plan = relationship("Plan", backref="customer_services")
     contracts = relationship("CustomerContract", back_populates="customer_service")
     billings = relationship("Billing", back_populates="customer_service")
+    address = relationship("CustomerAddress", back_populates="customer_service", uselist=False, cascade="all, delete")
