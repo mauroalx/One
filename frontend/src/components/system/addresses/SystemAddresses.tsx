@@ -7,11 +7,10 @@ import { useAuth } from "@/context/AuthContext";
 import AddressForm from "@/components/ui/system/addresses/SystemAddressForm";
 import SystemAddressesFilterHeader from "@/components/ui/system/addresses/SystemAddressesFilterHeader";
 import SystemAddressesTable from "@/components/ui/system/addresses/SystemAddressesTable";
-import Toast from "@/components/common/Toast";
-import NoStreetsMessage from "@/components/ui/system/addresses/SystemNoStreetsMessage";
 import NoEntityMessage from "@/components/ui/system/addresses/NoEntityMessage";
 import { api } from "@/utils/api";
 import EditAddressModal from "@/components/ui/system/addresses/EditAddressModal";
+import { useCustomToast } from "@/hooks/useCustomToast";
 
 export interface Address {
   id: number;
@@ -51,15 +50,11 @@ const SystemAddresses: React.FC = () => {
   const [editModalData, setEditModalData] = useState<{ id: number; name: string; zipcode?: string } | null>(null);
   const [editModalType, setEditModalType] = useState<"district" | "street" | null>(null);
 
-  const [toast, setToast] = useState({
-    visible: false,
-    message: "",
-    type: "success" as "success" | "error",
-  });
-
   const [page, setPage] = useState<number>(1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [modalType, setModalType] = useState<"district" | "street" | null>(null);
+
+  const { showToast } = useCustomToast();
 
   const [modalInitialData, setModalInitialData] = useState({
     state_id: "",
@@ -171,8 +166,7 @@ const SystemAddresses: React.FC = () => {
       const endpoint = modalType === "district" ? "/v1/system/districts" : "/v1/system/streets";
       await api.post(endpoint, data, token);
       setModalType(null);
-      setToast({ visible: true, message: "Endereço adicionado com sucesso!", type: "success" });
-      setTimeout(() => setToast({ ...toast, visible: false }), 3000);
+      showToast("Endereço adicionado com sucesso", "success", 4000);
 
       const [newDistrictsRes, newStreetsRes] = await Promise.all([
         api.get("/v1/system/districts", token),
@@ -191,8 +185,7 @@ const SystemAddresses: React.FC = () => {
       buildAddresses();
     } catch (err) {
       console.error(err);
-      setToast({ visible: true, message: "Erro ao adicionar endereço", type: "error" });
-      setTimeout(() => setToast({ ...toast, visible: false }), 3000);
+      showToast("Erro ao adicionar endereço", "error", 4000);
     }
   };
 
@@ -313,11 +306,9 @@ const SystemAddresses: React.FC = () => {
               const newDistricts = await res.json();
               setRefs(prev => ({ ...prev, districtsRaw: newDistricts }));
               setSelectedDistrict(null);
-              setToast({ visible: true, message: "Bairro removido com sucesso", type: "success" });
-              setTimeout(() => setToast({ ...toast, visible: false }), 3000);
+              showToast("Bairro removido com sucesso", "success", 4000);
             } catch (err) {
-              setToast({ visible: true, message: "Erro ao remover o bairro", type: "error" });
-              setTimeout(() => setToast({ ...toast, visible: false }), 3000);
+              showToast("Erro ao remover o bairro", "error", 4000);
             }
           }}
         />
@@ -330,8 +321,6 @@ const SystemAddresses: React.FC = () => {
         />
       )}
 
-
-    <Toast isVisible={toast.visible} message={toast.message} type={toast.type} />
 
     {editModalOpen && editModalData && editModalType && (
       <EditAddressModal
@@ -363,11 +352,9 @@ const SystemAddresses: React.FC = () => {
             }
 
             setEditModalOpen(false);
-            setToast({ visible: true, message: "Atualizado com sucesso", type: "success" });
-            setTimeout(() => setToast({ ...toast, visible: false }), 3000);
+            showToast("Endereço atualizado com sucesso", "success", 4000);
           } catch {
-            setToast({ visible: true, message: "Erro ao atualizar", type: "error" });
-            setTimeout(() => setToast({ ...toast, visible: false }), 3000);
+            showToast("Erro ao atualizar o endereço", "error", 4000);
           }
         }}
       />

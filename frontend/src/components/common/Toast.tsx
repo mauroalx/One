@@ -1,22 +1,21 @@
+// components/ui/Toast.tsx
 "use client";
 
 import { CheckCircle, XCircle } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
+import { useCustomToast } from "@/hooks/useCustomToast";
 
-interface ToastProps {
-  message: string;
-  isVisible: boolean;
-  type?: "success" | "error";
-}
+const Toast: React.FC = () => {
+  const { toast } = useCustomToast();
+  const { visible, message, type = "success" } = toast;
 
-const Toast: React.FC<ToastProps> = ({ message, isVisible, type = "success" }) => {
   const bgColor = type === "success" ? "bg-green-600" : "bg-red-600";
   const Icon = type === "success" ? CheckCircle : XCircle;
 
   return (
     <AnimatePresence>
-      {isVisible && (
+      {visible && (
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

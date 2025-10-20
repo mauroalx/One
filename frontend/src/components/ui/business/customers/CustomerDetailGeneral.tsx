@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import SectionHeader from "./CustomerSectionHeader";
+import { useCustomToast } from "@/hooks/useCustomToast";
 
 type EditSection = 'general' | 'contact' | 'address';
 
@@ -35,6 +36,7 @@ type Customer = {
 export default function CustomerDetailGeneral() {
   const { id } = useParams();
   const { token } = useAuth(); // Assuming you have a useAuth hook to get the token
+  const { showToast } = useCustomToast();
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [form, setForm] = useState<Partial<Customer>>({});
   const [editMode, setEditMode] = useState<Record<EditSection, boolean>>({
@@ -87,7 +89,7 @@ export default function CustomerDetailGeneral() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -97,11 +99,15 @@ export default function CustomerDetailGeneral() {
         throw new Error(errorText);
       }
 
+      showToast("Atualizado com sucesso", 'success', 3000);
+
       toggleEdit(section, false);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Erro ao salvar", err);
+      showToast("Erro ao salvar", "error", 5000);
     }
   };
+
 
   if (!customer) return <div>Carregando...</div>;
 
